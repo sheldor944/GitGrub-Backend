@@ -5,6 +5,9 @@ import OrderController from "../controllers/OrderController";
 const router = express.Router();
 
 router.get("/", jwtCheck, jwtParse, OrderController.getMyOrders);
+// api for the total sale of the restaurant 
+router.get("/total", jwtCheck , jwtParse, OrderController.getTotal );
+// router.get("/totalAmount", OrderController.getTotal);
 
 router.post(
   "/checkout/create-checkout-session",

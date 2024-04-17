@@ -9,6 +9,7 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
+    console.log(req);
     const orders = await Order.find({ user: req.userId })
       .populate("restaurant")
       .populate("user");
@@ -17,6 +18,26 @@ const getMyOrders = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "something went wrong" });
+  }
+};
+
+const getTotal = async (req : Request, res: Response) => {
+  try{
+      const restaurant = await Restaurant.find({user: req.userId});
+      // res.json(restaurant);
+      const ID = restaurant[0]._id;
+      // console.log(ID);
+      const orders = await Order.find({restaurant : ID});
+      // res.json(orders);
+      const totalAmountSum = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+      res.json({totalAmountSum});
+      // console.log(totalAmountSum); 
+      // console.log(restaurant);
+  }
+  catch (error)
+  {
+    console.log(error);
+    res.status(500).json({message: "something went wront in getTotal"}); 
   }
 };
 
@@ -177,4 +198,5 @@ export default {
   getMyOrders,
   createCheckoutSession,
   stripeWebhookHandler,
+  getTotal,
 };

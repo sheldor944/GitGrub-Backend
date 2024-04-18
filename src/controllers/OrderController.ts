@@ -21,6 +21,8 @@ const getMyOrders = async (req: Request, res: Response) => {
   }
 };
 
+// this needs to be in myRestaurant 
+
 const getTotal = async (req : Request, res: Response) => {
   try{
       const restaurant = await Restaurant.find({user: req.userId});

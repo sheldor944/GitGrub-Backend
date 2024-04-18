@@ -26,7 +26,7 @@ const getTotal = async (req : Request, res: Response) => {
       const restaurant = await Restaurant.find({user: req.userId});
       // res.json(restaurant);
       const ID = restaurant[0]._id;
-      // console.log(ID);
+      console.log(ID);
       const orders = await Order.find({restaurant : ID});
       // res.json(orders);
       const totalAmountSum = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);

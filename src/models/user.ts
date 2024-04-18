@@ -21,6 +21,9 @@ const userSchema = new mongoose.Schema({
   country: {
     type: String,
   },
+  usertype:{
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

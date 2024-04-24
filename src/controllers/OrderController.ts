@@ -9,7 +9,7 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
-    console.log(req);
+    // console.log(req);
     const orders = await Order.find({ user: req.userId })
       .populate("restaurant")
       .populate("user");
@@ -28,7 +28,7 @@ const getTotal = async (req : Request, res: Response) => {
       const restaurant = await Restaurant.find({user: req.userId});
       // res.json(restaurant);
       const ID = restaurant[0]._id;
-      console.log(ID);
+      // console.log(ID);
       const orders = await Order.find({restaurant : ID});
       // res.json(orders);
       const totalAmountSum = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);

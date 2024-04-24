@@ -20,22 +20,22 @@ router.post(
       .trim()
       .notEmpty()
       .withMessage("RestaurantId paramenter must be a valid string"),
+      jwtParse,
     jwtCheck,
-    jwtParse,
     ReviewController.createReview
   );
 
-  router.put(
-    "/saveReview/:restaurantId",
-    param("restaurantId")
-      .isString()
-      .trim()
-      .notEmpty()
-      .withMessage("RestaurantId paramenter must be a valid string"),
-    jwtCheck,
-    jwtParse,
-    ReviewController.createReview
-  );
+  // router.put(
+  //   "/saveReview/:restaurantId",
+  //   param("restaurantId")
+  //     .isString()
+  //     .trim()
+  //     .notEmpty()
+  //     .withMessage("RestaurantId paramenter must be a valid string"),
+  //   jwtCheck,
+  //   jwtParse,
+  //   ReviewController.createReview
+  // );
   
 router.get(
     "/:restaurantId",

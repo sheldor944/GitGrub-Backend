@@ -48,6 +48,7 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
       user: req.userId,
     });
 
+    // console.log(req.body);
     if (!restaurant) {
       return res.status(404).json({ message: "restaurant not found" });
     }

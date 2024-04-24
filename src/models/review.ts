@@ -4,6 +4,8 @@ const reviewSchema = new mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         restaurant: {type: mongoose.Schema.Types.ObjectId, ref: "Restaurant"},
+        email : {type : String },
+        username : {type : String}, 
         message: {type: String , required: true},
         rating: {
             type: Number,

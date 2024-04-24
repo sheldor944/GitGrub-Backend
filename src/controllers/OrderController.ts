@@ -12,7 +12,8 @@ const getMyOrders = async (req: Request, res: Response) => {
     // console.log(req);
     const orders = await Order.find({ user: req.userId })
       .populate("restaurant")
-      .populate("user");
+      .populate("user")
+      .sort({createdAt : 'desc'});
 
     res.json(orders);
   } catch (error) {

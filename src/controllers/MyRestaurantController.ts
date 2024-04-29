@@ -3,6 +3,71 @@ import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import Order from "../models/order";
+import Inventory from "../models/inventory";
+
+const getInventory = async (req : Request , res : Response) => {
+
+  try {
+    // console.log(req);
+
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
+    }
+    const  restaurantID = restaurant._id; 
+    console.log(restaurantID);
+    const inventory = await Inventory.find({restaurant : restaurantID}); 
+    console.log(inventory);
+    res.json(inventory);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching inventory" });
+  }
+
+}
+
+const updateInventory = async (req : Request , res : Response) => {
+    try{
+      const restaurant = await Restaurant.findOne({ user: req.userId });
+      if (!restaurant) {
+        return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
+      }
+      const  restaurantID = restaurant._id; 
+      const ingredientsName = req.body.itemName;
+
+      let inventory = await Inventory.findOne({restaurant : restaurantID , itemName : ingredientsName});
+      if (inventory) {
+        let quantity = inventory.availabeQuantity ; 
+        quantity += req.body.addedAmount;
+        inventory.availabeQuantity = quantity;
+    
+        await inventory.save(); 
+        res.json(inventory);
+    } else {
+        res.json({message : "No inventory found "});
+        // Handle case where no inventory is found
+    }
+      // res.json(inventory);
+    }catch(error)
+    {
+      res.json({message : "error + " + error})
+    }
+}
+
+const addInventory = async (req : Request , res : Response) =>  {
+  try{
+    const restaurantObj = await Restaurant.findOne({ user: req.userId });
+      if (!restaurantObj) {
+        return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
+      }
+      let inventory = new Inventory(req.body);
+      inventory.restaurant = restaurantObj._id;
+  }
+  catch(error)
+  {
+
+  }
+}
 
 const getMyRestaurant = async (req: Request, res: Response) => {
   try {
@@ -19,6 +84,8 @@ const getMyRestaurant = async (req: Request, res: Response) => {
 
 const createMyRestaurant = async (req: Request, res: Response) => {
   try {
+    console.log("this is the request ")
+    console.log(req.body);
     const existingRestaurant = await Restaurant.findOne({ user: req.userId });
 
     if (existingRestaurant) {
@@ -30,17 +97,20 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
     const restaurant = new Restaurant(req.body);
-    restaurant.imageUrl = imageUrl;
+    console.log(restaurant._id);
+    restaurant.imageUrl = "imageUrl";
     restaurant.user = new mongoose.Types.ObjectId(req.userId);
     restaurant.lastUpdated = new Date();
+    console.log( restaurant)
     await restaurant.save();
 
     res.status(201).send(restaurant);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" + error  });
   }
 };
+
 
 const updateMyRestaurant = async (req: Request, res: Response) => {
   try {
@@ -62,6 +132,31 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     restaurant.menuItems = req.body.menuItems;
     restaurant.lastUpdated = new Date();
 
+    // for (const menuItem of restaurant.menuItems) {
+    //   for (const ingrediantsItem of menuItem.ingredients) {
+    //     const ingrediantsItemName = ingrediantsItem.itemName ; 
+    //     const ingrediantsItemAmount = ingrediantsItem.quantity;
+    //     const restaurantID = restaurant._id; 
+    //     const existingInventory = await Inventory.find({restaurant : restaurantID , itemName : ingrediantsItemName}) ;
+    //     // console.log("this is the existing Inventory");
+    //     // console.log(existingInventory);
+    //     if(existingInventory.length === 0)
+    //       {
+    //           const inventory = new Inventory({
+    //             restaurant : restaurantID, 
+    //             itemName : ingrediantsItemName, 
+    //             needingAmount : ingrediantsItemAmount
+    //           })
+    //           // console.log("this inventory is going to the db ");
+    //           // console.log(inventory);
+    //           await inventory.save();
+    //       }
+        // here add this inventoryu to the db  
+        // console.log("total ingredients item ")
+        // console.log(ingrediantsItem);
+    //   }
+    // }
+
     if (req.file) {
       const imageUrl = await uploadImage(req.file as Express.Multer.File);
       restaurant.imageUrl = imageUrl;
@@ -71,7 +166,7 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     res.status(200).send(restaurant);
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" + error });
   }
 };
 
@@ -135,4 +230,7 @@ export default {
   getMyRestaurant,
   createMyRestaurant,
   updateMyRestaurant,
+  updateInventory,
+  getInventory, 
+  addInventory
 };

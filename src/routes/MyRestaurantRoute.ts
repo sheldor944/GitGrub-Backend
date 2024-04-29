@@ -48,4 +48,24 @@ router.put(
   MyRestaurantController.updateMyRestaurant
 );
 
+router.put(
+  "/updateInventory",
+  jwtCheck,
+  jwtParse, 
+  MyRestaurantController.updateInventory
+)
+
+router.get(
+  "/getInventory",
+  jwtCheck, 
+  jwtParse, 
+  MyRestaurantController.getInventory
+)
+router.post(
+  "/addInventory",
+  jwtCheck, 
+  jwtParse, 
+  MyRestaurantController.addInventory
+)
+
 export default router;

@@ -2,6 +2,8 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
+import mongoose from "mongoose";
+
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
@@ -43,6 +45,8 @@ const getTotal = async (req : Request, res: Response) => {
     res.status(500).json({message: "something went wront in getTotal"}); 
   }
 };
+
+
 
 type CheckoutSessionRequest = {
   cartItems: {
@@ -90,6 +94,16 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
   res.status(200).send();
 };
 
+type Menu ={
+  _id: mongoose.Schema.Types.ObjectId;
+    name: string;
+    price: number;
+    ingredients: {
+        quantity: number;
+        itemName: string;
+    }[];
+}
+
 const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const checkoutSessionRequest: CheckoutSessionRequest = req.body;
@@ -110,6 +124,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
       cartItems: checkoutSessionRequest.cartItems,
       createdAt: new Date(),
     });
+   
 
     const lineItems = createLineItems(
       checkoutSessionRequest,
@@ -128,6 +143,19 @@ const createCheckoutSession = async (req: Request, res: Response) => {
     }
 
     await newOrder.save();
+    // updating the inventory
+    // console.log("this is the order");
+    // console.log(newOrder);
+    const cartItems = newOrder.cartItems;
+
+    const menuItem  = restaurant.menuItems;
+    // const ing = menuItem.ingredients;
+    // console.log("this is the menuItem");
+    // console.log(menuItem);
+    // console.log("this is the cart items");
+    // console.log(cartItems);
+
+
     res.json({ url: session.url });
   } catch (error: any) {
     console.log(error);

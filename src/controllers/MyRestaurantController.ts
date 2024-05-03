@@ -138,7 +138,10 @@ const addInventory = async (req : Request , res : Response) =>  {
         return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
       }
       let inventory = new Inventory(req.body);
+      console.log(inventory);
       inventory.restaurant = restaurantObj._id;
+      await inventory.save();
+      res.json(inventory);
   }
   catch(error)
   {

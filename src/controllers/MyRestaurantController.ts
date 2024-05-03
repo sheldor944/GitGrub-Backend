@@ -4,6 +4,67 @@ import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import Order from "../models/order";
 import Inventory from "../models/inventory";
+import Employee from "../models/employee";
+
+
+const updateEmployee = async (req : Request , res : Response ) => {
+  try{
+    const email = req.body.email ; 
+
+    let employee = await Employee.findOne({email : email});
+    if(employee)
+      {
+        employee.name = req.body.name ; 
+        employee.imageUrl = req.body.imageUrl;
+        employee.resigningDate = req.body.resigningDate;
+        await employee.save();
+        res.json(employee);
+      }
+      else{
+        res.json({message : "No employee found"});
+      }
+
+  }
+  catch(error)
+  {
+    res.json("update employee " + error);
+  }
+}
+
+const getEmployee = async (req : Request , res : Response ) =>{
+  try{
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
+    }
+    const  restaurantID = restaurant._id;
+    const employee = await Employee.find({restaurant : restaurantID}); 
+    res.json(employee);
+  }
+  catch(error)
+  {
+    res.json({message: "Error happend in getEmployee " + error});
+  }
+}
+
+const addEmployee = async (req : Request , res : Response ) => {
+  try{
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
+    }
+    const  restaurantID = restaurant._id;
+    let employee = new Employee(req.body);
+    employee.restaurant = restaurantID; 
+    await employee.save();
+    res.json(employee); 
+
+  }
+  catch(error)
+  {
+    res.json({message : " error in addEmployee " + error});
+  }
+}
 
 const getInventory = async (req : Request , res : Response) => {
 
@@ -232,5 +293,8 @@ export default {
   updateMyRestaurant,
   updateInventory,
   getInventory, 
-  addInventory
+  addInventory,
+  addEmployee,
+  getEmployee,
+  updateEmployee,
 };

@@ -68,4 +68,25 @@ router.post(
   MyRestaurantController.addInventory
 )
 
+router.post(
+  "/addEmployee", 
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.addEmployee
+)
+
+router.get(
+  "/getEmployee", 
+  jwtCheck,
+  jwtParse, 
+  MyRestaurantController.getEmployee
+)
+
+router.put(
+  "/updateEmployee",
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.updateEmployee
+)
+
 export default router;

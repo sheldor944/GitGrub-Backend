@@ -15,9 +15,13 @@ const updateEmployee = async (req : Request , res : Response ) => {
     if(employee)
       {
         employee.name = req.body.name ;
-        const imageUrl = await uploadImage(req.file as Express.Multer.File);
+        if(req.file)
+          {
+            const imageUrl = await uploadImage(req.file as Express.Multer.File);
+    
+            employee.imageUrl = imageUrl;
 
-        employee.imageUrl = imageUrl;
+          }
         employee.resigningDate = req.body.resigningDate;
         await employee.save();
         res.json(employee);
@@ -56,10 +60,17 @@ const addEmployee = async (req : Request , res : Response ) => {
       return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
     }
     const  restaurantID = restaurant._id;
-    const imageUrl = await uploadImage(req.file as Express.Multer.File);
+    // const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
     let employee = new Employee(req.body);
-    employee.imageUrl = imageUrl;
+    if(req.file)
+      {
+        const imageUrl = await uploadImage(req.file as Express.Multer.File);
+
+        employee.imageUrl = imageUrl;
+
+      }
+    // employee.imageUrl = imageUrl;
     employee.restaurant = restaurantID; 
     await employee.save();
     res.json(employee); 
@@ -164,7 +175,7 @@ const createMyRestaurant = async (req: Request, res: Response) => {
 
     const restaurant = new Restaurant(req.body);
     console.log(restaurant._id);
-    restaurant.imageUrl = "imageUrl";
+    restaurant.imageUrl = imageUrl;
     restaurant.user = new mongoose.Types.ObjectId(req.userId);
     restaurant.lastUpdated = new Date();
     console.log( restaurant)

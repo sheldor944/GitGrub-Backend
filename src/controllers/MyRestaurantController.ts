@@ -14,8 +14,10 @@ const updateEmployee = async (req : Request , res : Response ) => {
     let employee = await Employee.findOne({email : email});
     if(employee)
       {
-        employee.name = req.body.name ; 
-        employee.imageUrl = req.body.imageUrl;
+        employee.name = req.body.name ;
+        const imageUrl = await uploadImage(req.file as Express.Multer.File);
+
+        employee.imageUrl = imageUrl;
         employee.resigningDate = req.body.resigningDate;
         await employee.save();
         res.json(employee);
@@ -54,7 +56,10 @@ const addEmployee = async (req : Request , res : Response ) => {
       return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
     }
     const  restaurantID = restaurant._id;
+    const imageUrl = await uploadImage(req.file as Express.Multer.File);
+
     let employee = new Employee(req.body);
+    employee.imageUrl = imageUrl;
     employee.restaurant = restaurantID; 
     await employee.save();
     res.json(employee); 

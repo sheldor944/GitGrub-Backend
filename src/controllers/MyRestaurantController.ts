@@ -105,6 +105,7 @@ const getInventory = async (req : Request , res : Response) => {
 
 const updateInventory = async (req : Request , res : Response) => {
     try{
+      console.log(req.body);
       const restaurant = await Restaurant.findOne({ user: req.userId });
       if (!restaurant) {
         return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
@@ -114,10 +115,8 @@ const updateInventory = async (req : Request , res : Response) => {
 
       let inventory = await Inventory.findOne({restaurant : restaurantID , itemName : ingredientsName});
       if (inventory) {
-        let quantity = inventory.availabeQuantity ; 
-        quantity += req.body.addedAmount;
+        let quantity = req.body.availabeQuantity; ; 
         inventory.availabeQuantity = quantity;
-    
         await inventory.save(); 
         res.json(inventory);
     } else {

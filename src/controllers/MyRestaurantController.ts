@@ -5,6 +5,10 @@ import mongoose from "mongoose";
 import Order from "../models/order";
 import Inventory from "../models/inventory";
 import Employee from "../models/employee";
+import User from "../models/employee";
+import {transporter , sendEmail} from "../middleware/SendOrderStatusEmail"
+
+
 
 
 const searchEmployee = async (req : Request , res : Response) => {
@@ -295,8 +299,37 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     const { status } = req.body;
 
     const order = await Order.findById(orderId);
+    
     if (!order) {
       return res.status(404).json({ message: "order not found" });
+    }
+    const customerID = order.user 
+    const customerUser = await User.findById(customerID)
+    if(customerUser){
+
+      const customerEmail = customerUser.email
+      try{
+        let message = "";
+
+        if (status === "Placed") {
+          message = "Your order has been successfully placed. We'll notify you once it's confirmed by the restaurant.";
+        } else if (status === "Awaiting for Restaurant Confirmation") {
+          message = "Your order is awaiting confirmation from the restaurant. We'll keep you updated.";
+        } else if (status === "In Progress") {
+          message = "Your order is now in progress. Our team is working to prepare your delicious meal.";
+        } else if (status === "Out for Delivery") {
+          message = "Your order is out for delivery. It will be arriving shortly. Thank you for choosing us!";
+        } else if (status === "Delivered") {
+          message = "Your order has been successfully delivered. We hope you enjoy your meal. Thank you for your order!";
+        } else {
+          message = "Invalid order status.";
+        }
+
+        sendEmail(customerEmail , status, message)
+      }
+      catch(error){
+        console.log("error in sending email "+ error)
+      }
     }
 
     const restaurant = await Restaurant.findById(order.restaurant);

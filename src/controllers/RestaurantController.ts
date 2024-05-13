@@ -22,20 +22,28 @@ const searchRestaurant = async (req: Request, res: Response) => {
     console.log("this is the request");
     console.log(req.body);
     const city = req.params.city;
+    console.log(city);
 
     const searchQuery = (req.query.searchQuery as string) || "";
+    console.log(searchQuery);
     const selectedCuisines = (req.query.selectedCuisines as string) || "";
     const sortOption = (req.query.sortOption as string) || "lastUpdated";
     const page = parseInt(req.query.page as string) || 1;
 
     let query: any = {};
 
-    query["city"] = new RegExp(city, "i");
+    // query["city"] = new RegExp(city, "i");
+    query["$or"] = [
+      { "restaurantName": new RegExp(city, "i") },
+      { "city": new RegExp(city, "i") }, 
+      {"searchingKeyWord" : new RegExp(city, "i")}
+    ];
     // for searching with the restaurant name 
     // query["restaurantName"] = new RegExp(city, "i");
     const cityCheck = await Restaurant.countDocuments(query);
+    console.log(cityCheck);
     if (cityCheck === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         data: [],
         pagination: {
           total: 0,

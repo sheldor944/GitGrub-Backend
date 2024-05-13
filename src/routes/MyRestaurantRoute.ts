@@ -3,6 +3,8 @@ import multer from "multer";
 import MyRestaurantController from "../controllers/MyRestaurantController";
 import { jwtCheck, jwtParse } from "../middleware/auth";
 import { validateMyRestaurantRequest } from "../middleware/validation";
+import { param } from "express-validator";
+
 
 const router = express.Router();
 
@@ -87,6 +89,18 @@ router.put(
   jwtCheck,
   jwtParse,
   MyRestaurantController.updateEmployee
+)
+
+router.get(
+  "/searchEmployee/:employeeName",
+  param("employeeName")
+  .isString()
+  .trim()
+  .notEmpty()
+  .withMessage("employeeName paramenter must be a valid string"),
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.searchEmployee
 )
 
 export default router;

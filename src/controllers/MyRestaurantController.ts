@@ -7,6 +7,26 @@ import Inventory from "../models/inventory";
 import Employee from "../models/employee";
 
 
+const searchEmployee = async (req : Request , res : Response) => {
+  const restaurant = await Restaurant.findOne({ user: req.userId });
+  const employeeName = req.params.employeeName
+
+  try{
+    let employee = await Employee.find({restaurant : restaurant?._id , name: { $regex: new RegExp(employeeName, "i")  }})
+    console.log(employee)
+    console.log(typeof(employee))
+    if(Object.keys(employee).length === 0){
+      return res.status(404).json({message : "No employee found"})
+    }
+    else{
+      return res.json(employee)
+    }
+  }
+  catch(error){
+    res.json({message : "error in search employee "+ error})
+  }
+}
+
 const updateEmployee = async (req : Request , res : Response ) => {
   try{
     const email = req.body.email ; 
@@ -316,4 +336,5 @@ export default {
   addEmployee,
   getEmployee,
   updateEmployee,
+  searchEmployee
 };

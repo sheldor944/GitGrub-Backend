@@ -210,6 +210,7 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     restaurant.cuisines = req.body.cuisines;
     restaurant.menuItems = req.body.menuItems;
     restaurant.lastUpdated = new Date();
+    restaurant.searchingKeyWord=req.body.searchingKeyWord;
 
     // for (const menuItem of restaurant.menuItems) {
     //   for (const ingrediantsItem of menuItem.ingredients) {

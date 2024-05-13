@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import Order from "../models/order";
 import Inventory from "../models/inventory";
 import Employee from "../models/employee";
-import User from "../models/employee";
+import User from "../models/user";
 import {transporter , sendEmail} from "../middleware/SendOrderStatusEmail"
 
 
@@ -310,16 +310,17 @@ const updateOrderStatus = async (req: Request, res: Response) => {
       const customerEmail = customerUser.email
       try{
         let message = "";
+        console.log(status)
 
-        if (status === "Placed") {
+        if (status === "placed") {
           message = "Your order has been successfully placed. We'll notify you once it's confirmed by the restaurant.";
-        } else if (status === "Awaiting for Restaurant Confirmation") {
+        } else if (status === "paid") {
           message = "Your order is awaiting confirmation from the restaurant. We'll keep you updated.";
-        } else if (status === "In Progress") {
+        } else if (status === "inProgress") {
           message = "Your order is now in progress. Our team is working to prepare your delicious meal.";
-        } else if (status === "Out for Delivery") {
+        } else if (status === "outForDelivery") {
           message = "Your order is out for delivery. It will be arriving shortly. Thank you for choosing us!";
-        } else if (status === "Delivered") {
+        } else if (status === "delivered") {
           message = "Your order has been successfully delivered. We hope you enjoy your meal. Thank you for your order!";
         } else {
           message = "Invalid order status.";

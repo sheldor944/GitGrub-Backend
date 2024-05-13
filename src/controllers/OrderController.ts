@@ -2,8 +2,10 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
-import mongoose from "mongoose";
+import User from "../models/user";
 import {transporter , sendEmail} from "../middleware/SendOrderStatusEmail"
+
+import mongoose from "mongoose";
 
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
@@ -13,8 +15,7 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
-    // console.log(req);
-    // sendEmail("mehrajul.abedin.944@gmail.com" , "Ready")
+    
     const orders = await Order.find({ user: req.userId })
       .populate("restaurant")
       .populate("user")
@@ -145,6 +146,20 @@ const createCheckoutSession = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Error creating stripe session" });
     }
 
+    const customerUser = await User.findById(req.userId)
+    if(customerUser){
+
+      const customerEmail = customerUser.email
+      try{
+        let message = "Your order has been successfully placed. We'll notify you once it's confirmed by the restaurant.";
+       console.log("this is called")
+
+        sendEmail(customerEmail , "placed", message)
+      }
+      catch(error){
+        console.log("error in sending email "+ error)
+      }
+    }
     await newOrder.save();
     // updating the inventory
     // console.log("this is the order");

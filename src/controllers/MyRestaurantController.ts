@@ -85,17 +85,17 @@ const addEmployee = async (req : Request , res : Response ) => {
     }
     const  restaurantID = restaurant._id;
     // const imageUrl = await uploadImage(req.file as Express.Multer.File);
-
     let employee = new Employee(req.body);
     if(req.file)
       {
         const imageUrl = await uploadImage(req.file as Express.Multer.File);
-
+        
         employee.imageUrl = imageUrl;
-
+        
       }
-    // employee.imageUrl = imageUrl;
-    employee.restaurant = restaurantID; 
+      // employee.imageUrl = imageUrl;
+      employee.restaurant = restaurantID; 
+      console.log(employee)
     await employee.save();
     res.json(employee); 
 
@@ -116,9 +116,9 @@ const getInventory = async (req : Request , res : Response) => {
       return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
     }
     const  restaurantID = restaurant._id; 
-    console.log(restaurantID);
+    // console.log(restaurantID);
     const inventory = await Inventory.find({restaurant : restaurantID}); 
-    console.log(inventory);
+    // console.log(inventory);
     res.json(inventory);
   } catch (error) {
     console.log("error", error);

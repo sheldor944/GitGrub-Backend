@@ -17,7 +17,7 @@ const sendEmail = async (to :string, orderStatus : string , message: String) =>{
         from: 'gitgrub.order@gamil.com',
         to: to,
         subject: 'Your order status is '+ orderStatus,
-        text: 'Greetings\nHope this email finds you well.' + message + "\nTeam GitGrub"
+        text: 'Greetings\nHope this email finds you well.' + message + "\n\n\n\n\n\n\n\nTeam GitGrub"
       };
     transporter.sendMail(mailOptions, function(error: any, info: { response: string; }){
           if (error) {

@@ -12,7 +12,7 @@ const employeeSchema = new mongoose.Schema({
         type : String 
     },
     resigningDate : { type : Date},
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
 
 
    

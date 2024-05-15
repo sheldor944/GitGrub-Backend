@@ -34,11 +34,11 @@ const searchEmployee = async (req : Request , res : Response) => {
 const updateEmployee = async (req : Request , res : Response ) => {
   try{
     const email = req.body.email ; 
+    console.log('this is', req.body);
 
     let employee = await Employee.findOne({email : email});
     if(employee)
       {
-        employee.name = req.body.name ;
         if(req.file)
           {
             const imageUrl = await uploadImage(req.file as Express.Multer.File);
@@ -47,6 +47,9 @@ const updateEmployee = async (req : Request , res : Response ) => {
 
           }
         employee.resigningDate = req.body.resigningDate;
+        employee.phone=req.body.phone;
+        employee.role=req.body.role;
+        employee.shiftDuration=req.body.shiftDuration;
         await employee.save();
         res.json(employee);
       }
@@ -69,6 +72,7 @@ const getEmployee = async (req : Request , res : Response ) =>{
     }
     const  restaurantID = restaurant._id;
     const employee = await Employee.find({restaurant : restaurantID}); 
+    console.log(employee);
     res.json(employee);
   }
   catch(error)
@@ -79,6 +83,7 @@ const getEmployee = async (req : Request , res : Response ) =>{
 
 const addEmployee = async (req : Request , res : Response ) => {
   try{
+    console.log(req.body);
     const restaurant = await Restaurant.findOne({ user: req.userId });
     if (!restaurant) {
       return res.status(404).json({ message: "restaurant not found for the inventory "+ req .userId });
@@ -102,6 +107,7 @@ const addEmployee = async (req : Request , res : Response ) => {
   }
   catch(error)
   {
+    console.log(error);
     res.json({message : " error in addEmployee " + error});
   }
 }

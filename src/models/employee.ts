@@ -11,8 +11,8 @@ const employeeSchema = new mongoose.Schema({
     shiftDuration :{
         type : String 
     },
-    resigningDate : { type : Date},
-    imageUrl: { type: String, required: true },
+    resigningDate : { type : Date, required: false},
+    imageUrl: { type: String },
 
 
    

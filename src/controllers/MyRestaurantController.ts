@@ -85,7 +85,11 @@ const addEmployee = async (req : Request , res : Response ) => {
     }
     const  restaurantID = restaurant._id;
     // const imageUrl = await uploadImage(req.file as Express.Multer.File);
-
+    console.log(req.body)
+    if(req.body.resigningDate == "undefined")
+      {
+        req.body.resigningDate = null
+      }
     let employee = new Employee(req.body);
     if(req.file)
       {
@@ -96,6 +100,7 @@ const addEmployee = async (req : Request , res : Response ) => {
       }
     // employee.imageUrl = imageUrl;
     employee.restaurant = restaurantID; 
+    console.log(employee)
     await employee.save();
     res.json(employee); 
 

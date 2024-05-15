@@ -3,9 +3,9 @@ import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
 import User from "../models/user";
-import {transporter , sendEmail} from "../middleware/SendOrderStatusEmail"
-
+import {sendEmail} from "../middleware/SendOrderStatusEmail"
 import mongoose from "mongoose";
+
 
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
